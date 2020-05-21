@@ -33,14 +33,6 @@ from tensor2tensor.utils import metrics
 from tensor2tensor.utils import mlperf_log
 
 import tensorflow.compat.v1 as tf
-# pylint: disable=g-import-not-at-top
-try:
-  from tensorflow.contrib.tpu.python.tpu import tpu_config
-except ImportError:
-  # TF 2.0 doesn't ship with contrib.
-  tpu_config = None
-# pylint: enable=g-import-not-at-top
-
 
 
 class DatasetSplit(object):
@@ -825,8 +817,7 @@ class Problem(object):
       return 0, 1
     phift = config.tpu_config.per_host_input_for_training
     # This is the mesh-tensorflow case.
-    if (hasattr(tpu_config.InputPipelineConfig, "BROADCAST") and
-        phift == tpu_config.InputPipelineConfig.BROADCAST):
+    if (phift == tf.estimator.tpu.InputPipelineConfig.BROADCAST):
       return 0, 1
     if phift:
       num_hosts = (params["context"].num_hosts if "context" in params

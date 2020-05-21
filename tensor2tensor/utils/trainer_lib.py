@@ -242,8 +242,8 @@ def create_run_config(model_name,
   # tf.estimator RunConfig construction got totally broken in TF2.
   # we now have to specify master in a global environment variable
   if contrib.is_tf2:
-    del run_config_args["evaluation_master"]
-    del run_config_args["master"]
+    run_config_args.pop("evaluation_master", None)
+    run_config_args.pop("master", None)
 
   config = run_config_cls(**run_config_args)
 
@@ -300,10 +300,8 @@ def create_estimator(model_name,
   model_fn = t2t_model.T2TModel.make_estimator_model_fn(
       model_name, hparams, decode_hparams=decode_hparams, use_tpu=use_tpu)
 
-
   del use_xla
   if use_tpu or use_tpu_estimator:
-    from tensorflow.contrib.tpu.python.tpu import tpu_estimator  # pylint: disable=g-import-not-at-top
     problem = hparams.problem
     batch_size = (
         problem.tpu_batch_size_per_shard(hparams) *
@@ -319,10 +317,10 @@ def create_estimator(model_name,
       decode_hparams.add_hparam("iterations_per_loop",
                                 run_config.tpu_config.iterations_per_loop)
     if export_saved_model_api_version == 1:
-      api_version_enum_name = tpu_estimator.ExportSavedModelApiVersion.V1
+      api_version_enum_name = contrib.tpu_estimator().ExportSavedModelApiVersion.V1
       estimator_model_fn = model_fn
     elif export_saved_model_api_version == 2:
-      api_version_enum_name = tpu_estimator.ExportSavedModelApiVersion.V2
+      api_version_enum_name = contrib.tpu_estimator().ExportSavedModelApiVersion.V2
 
       def maybe_use_guarantee_const_getter_model_fn(features, labels, mode,
                                                     params):
@@ -356,12 +354,12 @@ def create_estimator(model_name,
       def tpu_model_fn(features, labels, mode, params):
         """Wrapper model_fn with tpu.rewrite / TPUPartitionedCall."""
         if mode == tf.estimator.ModeKeys.PREDICT and params["use_tpu"]:
-          batch_config = tpu_estimator.BatchConfig(
+          batch_config = contrib.tpu_estimator().BatchConfig(
               num_batch_threads=2,
               max_batch_size=predict_batch_size,
               batch_timeout_micros=60 * 1000,
               allowed_batch_sizes=[predict_batch_size])
-          return tpu_estimator.model_fn_inference_on_tpu(
+          return contrib.tpu_estimator().model_fn_inference_on_tpu(
               maybe_use_guarantee_const_getter_model_fn,
               features=features,
               labels=labels,
