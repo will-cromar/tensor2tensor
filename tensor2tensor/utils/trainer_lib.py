@@ -221,8 +221,8 @@ def create_run_config(model_name,
     }
     if tpu_config_extra_kwargs is not None:
       tpu_config_kwargs.update(tpu_config_extra_kwargs)
-    run_config_cls = contrib.tpu().RunConfig
-    tpu_config = contrib.tpu().TPUConfig(**tpu_config_kwargs)
+    run_config_cls = tf.estimator.tpu.RunConfig
+    tpu_config = tf.estimator.tpu.TPUConfig(**tpu_config_kwargs)
     run_config_args["tpu_config"] = tpu_config
     if not master and "KUBE_GOOGLE_CLOUD_TPU_ENDPOINTS" in os.environ:
       # If running on TPU but no master is set and the KUBE env var is present
@@ -233,7 +233,7 @@ def create_run_config(model_name,
     elif not master and cloud_tpu_name:
       # Update run_config to use cluster instead of master/evaluation_master
       # as we need the cluster spec to use Cloud Pods
-      tpu_cluster_resolver = contrib.cluster_resolver().TPUClusterResolver(
+      tpu_cluster_resolver = tf.distribute.cluster_resolver.TPUClusterResolver(
           tpu=cloud_tpu_name, zone=cloud_tpu_zone)
       run_config_args["cluster"] = tpu_cluster_resolver
       del run_config_args["master"]
@@ -376,7 +376,7 @@ def create_estimator(model_name,
       estimator_model_fn = tpu_model_fn
     else:
       raise ValueError("Flag export_saved_model_api_version must be 1 or 2.")
-    estimator = contrib.tpu().TPUEstimator(
+    estimator = tf.estimator.tpu.TPUEstimator(
         model_fn=estimator_model_fn,
         model_dir=run_config.model_dir,
         config=run_config,

@@ -445,12 +445,12 @@ class NasSeq2Seq(transformer.Transformer):
       # For TPU, logits dict will be passed as keyword arguments to
       # eval_metrics_fn. Here we add the labels to those arguments.
       logits.update({"labels": labels})
-      return contrib.tpu().TPUEstimatorSpec(
+      return tf.estimator.tpu.TPUEstimatorSpec(
           tf.estimator.ModeKeys.EVAL,
           eval_metrics=(eval_metrics_fn, logits),
           loss=loss)
     else:
-      return contrib.tpu().TPUEstimatorSpec(
+      return tf.estimator.tpu.TPUEstimatorSpec(
           tf.estimator.ModeKeys.EVAL,
           eval_metrics=(eval_metrics_fn, [logits, labels]),
           loss=loss)

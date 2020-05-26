@@ -124,16 +124,10 @@ def seq2seq():
 
 
 def tpu():
-  if not is_tf2:
-    from tensorflow.contrib import tpu as contrib_tpu  # pylint: disable=g-direct-tensorflow-import,g-import-not-at-top
-    return contrib_tpu
-  return DummyModule(
-    RunConfig=tf.compat.v1.estimator.tpu.RunConfig,
-    TPUConfig=tf.compat.v1.estimator.tpu.TPUConfig,
-    TPUEstimator=tf.compat.v1.estimator.tpu.TPUEstimator,
-    CrossShardOptimizer=tf.compat.v1.tpu.CrossShardOptimizer,
-    TPUEstimatorSpec=tf.compat.v1.estimator.tpu.TPUEstimatorSpec,
-  )
+  err_if_tf2(msg='err')
+  from tensorflow.contrib import tpu as contrib_tpu  # pylint: disable=g-direct-tensorflow-import,g-import-not-at-top
+  return contrib_tpu
+
 
 def tpu_estimator():
   if not is_tf2:
@@ -141,6 +135,7 @@ def tpu_estimator():
   else:
     from tensorflow_estimator.python.estimator.tpu import tpu_estimator as contrib_tpu_estimator
   return contrib_tpu_estimator
+
 
 def training():
   err_if_tf2(msg='err')
@@ -177,13 +172,9 @@ def mixed_precision():
 
 
 def cluster_resolver():
-  if not is_tf2:
-    err_if_tf2(msg='err')
-    from tensorflow.contrib import cluster_resolver as contrib_cluster_resolver  # pylint: disable=g-direct-tensorflow-import,g-import-not-at-top
-    return contrib_cluster_resolver
-  return DummyModule(
-    TPUClusterResolver=tf.distribute.cluster_resolver.TPUClusterResolver,
-  )
+  err_if_tf2(msg='err')
+  from tensorflow.contrib import cluster_resolver as contrib_cluster_resolver  # pylint: disable=g-direct-tensorflow-import,g-import-not-at-top
+  return contrib_cluster_resolver
 
 
 def distribute():

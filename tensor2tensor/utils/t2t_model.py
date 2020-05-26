@@ -1580,7 +1580,7 @@ class T2TModel(base.Layer):
 
       remove_summaries()
 
-      return contrib.tpu().TPUEstimatorSpec(
+      return tf.estimator.tpu.TPUEstimatorSpec(
           tf.estimator.ModeKeys.TRAIN,
           loss=loss,
           train_op=train_op,
@@ -1637,7 +1637,7 @@ class T2TModel(base.Layer):
       )
 
       eval_metrics_fn_flat_args = _flatten_dict(eval_metrics_fn_args)
-      return contrib.tpu().TPUEstimatorSpec(
+      return tf.estimator.tpu.TPUEstimatorSpec(
           tf.estimator.ModeKeys.EVAL,
           eval_metrics=(eval_metrics_fn, eval_metrics_fn_flat_args),
           host_call=host_call,
@@ -1766,7 +1766,7 @@ class T2TModel(base.Layer):
 
       remove_summaries()
 
-      return contrib.tpu().TPUEstimatorSpec(
+      return tf.estimator.tpu.TPUEstimatorSpec(
           tf.estimator.ModeKeys.PREDICT,
           predictions=predictions,
           host_call=host_call,

@@ -69,7 +69,7 @@ def optimize(loss,
       diet_vars, "Diet Variables", verbose=hparams.summarize_vars)
   opt = ConditionalOptimizer(hparams.optimizer, learning_rate, hparams, use_tpu)
   if use_tpu:
-    opt = contrib.tpu().CrossShardOptimizer(opt)
+    opt = tf.tpu.CrossShardOptimizer(opt)
   if getattr(hparams, "gpu_automatic_mixed_precision", False):
     if use_tpu:
       raise RuntimeError("GPU auto mixed precision cannot be used with TPU")
