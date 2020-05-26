@@ -189,6 +189,10 @@ def create_run_config(model_name,
       xla_jit_level=xla_jit_level,
       inter_op_parallelism_threads=inter_op_parallelism_threads,
       intra_op_parallelism_threads=intra_op_parallelism_threads)
+  # Use global config for soft device placement in TF2.
+  if contrib.is_tf2:
+    tf.config.set_soft_device_placement(session_config.allow_soft_placement)
+
   run_config_args = {
       "master": master,
       "evaluation_master": master,
