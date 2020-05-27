@@ -2115,7 +2115,7 @@ def remove_summaries():
   """Remove summaries from the default graph."""
   g = tf.get_default_graph()
   key = tf.GraphKeys.SUMMARIES
-  log_debug("Remove summaries %s" % str(g.get_collection(key)))
+  log_info("Remove summaries %s" % str(g.get_collection(key)))
   del g.get_collection_ref(key)[:]
   assert not g.get_collection(key)
 

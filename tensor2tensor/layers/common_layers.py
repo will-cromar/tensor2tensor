@@ -97,6 +97,9 @@ def is_xla_compiled():
   Returns:
     bool, whether the current graph will be compiled for XLA.
   """
+  if contrib.is_tf2:
+    return control_flow_util.GraphOrParentsInXlaContext(tf.get_default_graph())
+
   ctxt = tf.get_default_graph()._get_control_flow_context()  # pylint: disable=protected-access
   return control_flow_util.GetContainingXLAContext(ctxt) is not None
 
@@ -3367,6 +3370,9 @@ def should_generate_summaries():
   Returns:
     a boolean
   """
+  if contrib.is_tf2 and is_xla_compiled():
+    return False
+
   name_scope = contrib.framework().get_name_scope()
   if name_scope and "while/" in name_scope:
     # Summaries don't work well within tf.while_loop()
