@@ -33,6 +33,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+from absl import logging
 from tensor2tensor.bin import t2t_trainer
 from tensor2tensor.data_generators import problem  # pylint: disable=unused-import
 from tensor2tensor.data_generators import text_encoder
@@ -171,7 +172,7 @@ def score_file(filename):
 
 
 def main(_):
-  tf.logging.set_verbosity(tf.logging.INFO)
+  logging.set_verbosity(tf.logging.INFO)
   trainer_lib.set_random_seed(FLAGS.random_seed)
   usr_dir.import_usr_dir(FLAGS.t2t_usr_dir)
 
